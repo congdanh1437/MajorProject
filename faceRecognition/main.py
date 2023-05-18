@@ -239,6 +239,7 @@ class Ui_AttendenceSystem(object):
 
         self.retranslateUi(AttendenceSystem)
         QtCore.QMetaObject.connectSlotsByName(AttendenceSystem)
+
     def OpenCam(self):
         cam = True
         if cam:
@@ -246,21 +247,25 @@ class Ui_AttendenceSystem(object):
         else:
             self.vid = cv2.VideoCapture("memetotally.mp4")
 
+        count = 0
         while True:
             OK, self.frame = self.vid.read()
             gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             faces = face_detector.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
+            # time.sleep(0.5)
             for (x, y, w, h) in faces:
                 color = (0, 255, 0)
                 stroke = 2
                 end_cord_x = x + w
                 end_cord_y = y + h
-                self.cuttedFace= self.frame[y+2: y+h-2 , x+2:x+w-2]
+                roi = self.cuttedFace= self.frame[y+2: y+h-2, x+2:x+w-2]
+                cv2.imwrite('imgs_face/roi_{}.jpg'.format(count),roi)
                 cv2.rectangle(self.frame, (x, y), (end_cord_x, end_cord_y), color, stroke)
-
+                count += 1
             self.update()
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+
 
     def cutFace(self):
 
@@ -311,3 +316,4 @@ if __name__ == "__main__":
     ui.setupUi(AttendenceSystem)
     AttendenceSystem.show()
     sys.exit(app.exec_())
+
